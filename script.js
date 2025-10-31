@@ -10,7 +10,18 @@ class TelegramClicker {
     
     init() {
         this.bindEvents();
-        this.updateBalance();
+        this.updateDisplay();
+        
+        // Инициализация Telegram Web App
+        if (this.isTelegramWebApp()) {
+            Telegram.WebApp.ready();
+            Telegram.WebApp.expand();
+            console.log('Telegram Web App инициализирован');
+        }
+    }
+    
+    isTelegramWebApp() {
+        return window.Telegram && window.Telegram.WebApp;
     }
     
     bindEvents() {
@@ -21,7 +32,7 @@ class TelegramClicker {
         
         // Обновление баланса
         document.getElementById('refreshBalance').addEventListener('click', () => {
-            this.updateBalance();
+            this.getBalanceFromBot();
         });
         
         // Получение топа
@@ -35,7 +46,7 @@ class TelegramClicker {
         
         // Проверка кулдауна
         if (now - this.lastClickTime < this.cooldown) {
-            this.showMessage('⏳ Слишком быстро! Подождите немного.');
+            this.showMessage('⏳ Слишком быстро! Подождите 1 секунду');
             return;
         }
         
@@ -46,13 +57,13 @@ class TelegramClicker {
         this.createCoinAnimation();
         
         // Отправка данных в бота
-        if (window.Telegram && window.Telegram.WebApp) {
+        if (this.isTelegramWebApp()) {
             Telegram.WebApp.sendData('click:' + Date.now());
         } else {
             // Для тестирования вне Telegram
             this.balance++;
             this.updateDisplay();
-            this.showMessage('✅ +1 сережник!');
+            this.showMessage('✅ +1 сережник! (тестовый режим)');
         }
         
         // Обновляем отображение
@@ -75,23 +86,26 @@ class TelegramClicker {
         }, 1000);
     }
     
-    updateBalance() {
-        if (window.Telegram && window.Telegram.WebApp) {
+    getBalanceFromBot() {
+        if (this.isTelegramWebApp()) {
             Telegram.WebApp.sendData('get_balance');
+            this.showMessage('🔄 Запрос отправлен боту...');
         } else {
             // Для тестирования
-            this.balance = Math.floor(Math.random() * 100) + 20;
+            this.balance += 5;
             this.updateDisplay();
+            this.showMessage('💎 +5 сережников (тестовый режим)');
         }
     }
     
     updateDisplay() {
         document.getElementById('balance').textContent = `${this.balance} сережников 💎`;
+        document.getElementById('totalClicks').textContent = this.totalClicks;
     }
     
     showTop() {
         const topList = document.getElementById('topList');
-        topList.innerHTML = '<div class="top-item"><span>Игрок</span><span>Баланс</span></div>';
+        topList.innerHTML = '<div class="top-item" style="font-weight: bold; border-bottom: 2px solid #333;"><span>Игрок</span><span>Баланс</span></div>';
         
         // Заглушка для тестирования
         const mockTop = [
@@ -112,6 +126,7 @@ class TelegramClicker {
             if (player.name === 'Вы') {
                 item.style.fontWeight = 'bold';
                 item.style.color = '#e74c3c';
+                item.style.background = '#fff0f0';
             }
             topList.appendChild(item);
         });
@@ -123,10 +138,12 @@ class TelegramClicker {
         
         clickInfo.textContent = text;
         clickInfo.style.color = '#e74c3c';
+        clickInfo.style.fontWeight = 'bold';
         
         setTimeout(() => {
             clickInfo.textContent = originalText;
             clickInfo.style.color = '#666';
+            clickInfo.style.fontWeight = 'normal';
         }, 2000);
     }
 }
@@ -134,10 +151,4 @@ class TelegramClicker {
 // Инициализация при загрузке
 document.addEventListener('DOMContentLoaded', () => {
     new TelegramClicker();
-    
-    // Инициализация Telegram Web App
-    if (window.Telegram && window.Telegram.WebApp) {
-        Telegram.WebApp.ready();
-        Telegram.WebApp.expand();
-    }
 });
