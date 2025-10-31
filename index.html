@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Кликер - Сережники</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🎮 Кликер</h1>
+            <div class="balance" id="balance">Загрузка...</div>
+        </div>
+        
+        <div class="click-area">
+            <button class="click-button" id="clickButton">
+                💎 КЛИКНИ! 💎
+            </button>
+            <div class="click-info" id="clickInfo">+1 сережник за клик</div>
+        </div>
+        
+        <div class="stats">
+            <div class="stat-item">
+                <span>Всего кликов:</span>
+                <span id="totalClicks">0</span>
+            </div>
+            <div class="stat-item">
+                <span>Доход за клик:</span>
+                <span>+1 💎</span>
+            </div>
+        </div>
+        
+        <div class="actions">
+            <button class="action-btn" id="refreshBalance">🔄 Обновить баланс</button>
+            <button class="action-btn" id="getTop">🏆 Топ игроков</button>
+        </div>
+        
+        <div class="top-list" id="topList"></div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
